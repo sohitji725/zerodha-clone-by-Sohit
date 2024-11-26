@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const path = require("path");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -15,6 +16,18 @@ const uri = process.env.MONGO_URL;
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+// The catch-all handler: for any request that doesn't match one above,
+// send back the React app.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+});
+console.log("Static files served from:", path.join(__dirname, '../frontend/build'));
+console.log("Index file path:", path.join(__dirname, '../frontend/build/index.html'));
+
 // app.use(express.json());
 
 // app.get("/addHoldings", async (req, res) => {
@@ -223,8 +236,12 @@ res.send("order Saved");
 
 
 
-app.listen(PORT, () => {
-  console.log("App started!");
-  mongoose.connect(uri);
-  console.log("DB started!");
+// app.listen(PORT, () => {
+//   console.log("App started!");
+//   mongoose.connect(uri);
+//   console.log("DB started!");
+// });
+
+app.listen(3002, () => {
+  console.log("Server is running on port 3002");
 });
